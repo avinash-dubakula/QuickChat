@@ -155,7 +155,7 @@ namespace QuickChat.BusinessLogicLayer.Services
             var updateResult = await _messageRepository.UpdateMessagesForSeen(currentUserId, currentUserId, currentTime);
             if (updateResult > 1)
             {
-                //Invoke SignalR
+                //Invoke The SignalR
             }
             return true;
         }
