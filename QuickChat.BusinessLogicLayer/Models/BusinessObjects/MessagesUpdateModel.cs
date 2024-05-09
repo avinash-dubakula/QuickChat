@@ -8,6 +8,7 @@ namespace QuickChat.BusinessLogicLayer.Models.BusinessObjects
         public DateTime DbFetchedTime { get; set; }
         public DateTime DeliveredTime { get; set; }
         public MessageStatus NewStatus { get; set; }
+        public int LastSeenMessageID { get; set; } = -1;
     }
     public class MessagesSeenModel
     {

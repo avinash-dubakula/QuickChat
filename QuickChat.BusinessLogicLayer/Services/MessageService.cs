@@ -144,7 +144,7 @@ namespace QuickChat.BusinessLogicLayer.Services
                 return true;
             }
         }
-        public async Task<bool> UpdateMessagesToSeen(string currentUserId, MessagesSeenModel messagesSeenModel)
+        public async Task<bool> UpdateMessagesToSeen(string currentUserId, string currentUserName, MessagesSeenModel messagesSeenModel)
         {
             string? friendUserId = await _userRepository.GetUserId(messagesSeenModel.FriendUserName);
             if (string.IsNullOrEmpty(currentUserId) && string.IsNullOrEmpty(friendUserId))
@@ -152,10 +152,18 @@ namespace QuickChat.BusinessLogicLayer.Services
                 return false;
             }
             var currentTime = DateTime.Now;
-            var updateResult = await _messageRepository.UpdateMessagesForSeen(currentUserId, currentUserId, currentTime);
+            var updateResult = await _messageRepository.UpdateMessagesForSeen(currentUserId, friendUserId, currentTime, messagesSeenModel.SeenTillMessageId);
             if (updateResult > 1)
             {
                 //Invoke The SignalR
+                MessagesUpdateModel model = new MessagesUpdateModel()
+                {
+                    NewStatus = MessageStatus.Seen,
+                    FriendUserName = currentUserName,
+                    LastSeenMessageID = messagesSeenModel.SeenTillMessageId
+                };
+                _signalRService.SendMessagesUpdatedSignal(new List<string>() { messagesSeenModel.FriendUserName }, model);
+
             }
             return true;
         }

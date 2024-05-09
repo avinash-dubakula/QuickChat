@@ -101,7 +101,7 @@ namespace QuickChat.Controllers
                 var currentUserName = _userHelp.GetCurrentUserName();
                 if (currentUserId != null)
                 {
-                    var result = await _messageService.UpdateMessagesToSeen(currentUserId, model);
+                    var result = await _messageService.UpdateMessagesToSeen(currentUserId, currentUserName, model);
                     return Ok(result);
                 }
                 return Ok(false);

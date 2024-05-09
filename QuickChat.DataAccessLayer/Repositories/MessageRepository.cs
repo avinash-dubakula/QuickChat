@@ -36,9 +36,18 @@ namespace QuickChat.DataAccessLayer.Repositories
                     SenderUserId = senderUserId,
                     RecieverUserId = recieverUserId,
                     Message = message,
-                    MessageSentAt = DateTime.Now,
-                    MessageStatus = MessageStatus.Sent
                 };
+                if (senderUserId != recieverUserId)
+                {
+                    userMessage.MessageSentAt = DateTime.Now;
+                    userMessage.MessageStatus = MessageStatus.Sent;
+                }
+                else
+                {
+                    userMessage.MessageStatus = MessageStatus.Seen;
+                    userMessage.MessageSentAt = DateTime.Now;
+                    userMessage.MessageSeenAt = DateTime.Now;
+                }
                 await _myIdentityDbContext.UserMessages.AddAsync(userMessage);
                 var sendingResult = await _myIdentityDbContext.SaveChangesAsync();
                 if (sendingResult > 0)
@@ -115,10 +124,10 @@ namespace QuickChat.DataAccessLayer.Repositories
             await _myIdentityDbContext.SaveChangesAsync();
             return userNames;
         }
-        public async Task<int> UpdateMessagesForSeen(string currentUserId, string friendUserId, DateTime currentTime)
+        public async Task<int> UpdateMessagesForSeen(string currentUserId, string friendUserId, DateTime currentTime, int latestMessgaeID)
         {
             var messagesTobeUpdated = await _myIdentityDbContext.UserMessages
-                .Where(message => message.SenderUserId == friendUserId && message.RecieverUserId == currentUserId).ToListAsync();
+                .Where(message => message.SenderUserId == friendUserId && message.RecieverUserId == currentUserId && message.Id <= latestMessgaeID).ToListAsync();
             foreach (var message in messagesTobeUpdated)
             {
                 message.MessageStatus = MessageStatus.Seen;

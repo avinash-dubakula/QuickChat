@@ -16,7 +16,7 @@ namespace QuickChat.BusinessLogicLayer.IRepositories
         public Task<List<UserMessage>> GetMessagesBetweenUsersAsync(string currentUserId, string friendUserId);
         public Task<DateTime?> GetEarliestUnDeliveredMessageDateAsync(string currentUserId, string friendUserId);
         public Task<List<string>> GetMessagesForDeliver(string currentUserId, DateTime dbfetchedTime, DateTime DeliveredTime);
-        public Task<int> UpdateMessagesForSeen(string currentUserId, string friendUserId, DateTime currentTime);
+        public Task<int> UpdateMessagesForSeen(string currentUserId, string friendUserId, DateTime currentTime, int latestMessgaeID);
 
     }
 }
