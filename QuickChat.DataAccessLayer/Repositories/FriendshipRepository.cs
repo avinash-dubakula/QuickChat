@@ -136,7 +136,7 @@ namespace QuickChat.DataAccessLayer.Repositories
                 throw new Exception("Cannot Update the Friend Request");
             }
         }
-        public async Task<IEnumerable<FriendRequestData>> GetUserFriendRequests(string userId)
+        public async Task<List<FriendRequestData>> GetUserFriendRequests(string userId)
         {
             var friendRequests = await _myIdentityDbContext.UserFriendRequests
                 .Where(record => record.RecieverUserId == userId && record.FriendRequestStatus == FriendRequestStatus.Sent).ToListAsync();
@@ -149,12 +149,14 @@ namespace QuickChat.DataAccessLayer.Repositories
                         SenderUserName = u.UserName,
                         SentAt = fr.SentAt,
                         FriendUserId = (fr.SenderUserId == userId) ? fr.RecieverUserId : fr.SenderUserId,
-                        ProfileUrl = u.ProfilePhotoUrl
+                        ProfileUrl = u.ProfilePhotoUrl,
+
                     })
                 .ToList();
             return friendRequestModels;
         }
-        public async Task<IEnumerable<FriendData>> GetUserFriendsData(string userId)
+
+        public async Task<List<FriendData>> GetUserFriendsData(string userId)
         {
             var friendRequests = await _myIdentityDbContext.UserFriendRequests
                 .Where(record => (record.RecieverUserId == userId || record.SenderUserId == userId) && record.FriendRequestStatus == FriendRequestStatus.Accepted).ToListAsync();
@@ -166,7 +168,9 @@ namespace QuickChat.DataAccessLayer.Repositories
                         FullName = u.FirstName + " " + u.LastName,
                         UserName = u.UserName,
                         Email = u.Email,
-                        FriendsFrom = fr.UpdatedAt
+                        FriendsFrom = fr.UpdatedAt,
+                        ProfilePhotoUrl = u.ProfilePhotoUrl,
+                        UserId = u.Id
                     })
                 .ToList();
             return friendDataModels;

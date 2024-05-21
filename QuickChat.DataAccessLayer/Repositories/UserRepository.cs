@@ -48,6 +48,8 @@ namespace QuickChat.DataAccessLayer.Repositories
                     Email = item.Email,
                     FullName = item.FirstName + " " + item.LastName,
                     UserName = item.UserName
+                    ,
+                    ProfilePhotoUrl = item.ProfilePhotoUrl
                 }).ToListAsync();
                 return users;
             }
