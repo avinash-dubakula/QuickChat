@@ -40,9 +40,9 @@ namespace QuickChat.DataAccessLayer.Repositories
             }
             else
             {
-                var query = _myIdentityDbContext.Users.Where(user => (user.UserName.Contains(searchText) ||
-                                    user.Email.Contains(searchText) ||
-                                    user.PhoneNumber.Contains(searchText)) && (!user.UserName.Equals(userName)));
+                var query = _myIdentityDbContext.Users.Where(user => (user.UserName.ToLower().Contains(searchText) ||
+                                    user.Email.ToLower().Contains(searchText) || (user.FirstName + " " + user.LastName).ToLower().Contains(searchText) ||
+                                    user.PhoneNumber.ToLower().Contains(searchText)) && (!user.UserName.ToLower().Equals(userName)));
                 var users = await query.Take(noOfMatches).Select(item => new UserData()
                 {
                     Email = item.Email,

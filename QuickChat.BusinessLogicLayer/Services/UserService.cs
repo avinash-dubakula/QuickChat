@@ -14,7 +14,7 @@ namespace QuickChat.BusinessLogicLayer.Services
         }
         public async Task<IEnumerable<UserData>> GetUsers(string userName, string searchText)
         {
-            var users = await _userRepository.GetUsers(userName, 10, searchText ?? string.Empty);
+            var users = await _userRepository.GetUsers(userName, 10, searchText.ToLower() ?? string.Empty);
             return users;
         }
     }

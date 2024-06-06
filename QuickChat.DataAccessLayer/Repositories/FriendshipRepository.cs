@@ -136,14 +136,14 @@ namespace QuickChat.DataAccessLayer.Repositories
                 throw new Exception("Cannot Update the Friend Request");
             }
         }
-        public async Task<List<FriendRequestData>> GetUserFriendRequests(string userId)
+        public async Task<FriendRequestData> GetUserFriendRequests(string userId)
         {
-            var friendRequests = await _myIdentityDbContext.UserFriendRequests
+            var friendRequest1 = await _myIdentityDbContext.UserFriendRequests
                 .Where(record => record.RecieverUserId == userId && record.FriendRequestStatus == FriendRequestStatus.Sent).ToListAsync();
-            var friendRequestModels = friendRequests.Join(_myIdentityDbContext.Users,
+            var friendRequestModels1 = friendRequest1.Join(_myIdentityDbContext.Users,
                     fr => fr.SenderUserId,
                     u => u.Id,
-                    (fr, u) => new FriendRequestData
+                    (fr, u) => new FriendRequest
                     {
                         SenderName = u.FirstName + " " + u.LastName,
                         SenderUserName = u.UserName,
@@ -153,7 +153,22 @@ namespace QuickChat.DataAccessLayer.Repositories
 
                     })
                 .ToList();
-            return friendRequestModels;
+            var friendRequests2 = await _myIdentityDbContext.UserFriendRequests
+                .Where(record => record.SenderUserId == userId && record.FriendRequestStatus == FriendRequestStatus.Sent).ToListAsync();
+            var friendRequestModels2 = friendRequests2.Join(_myIdentityDbContext.Users,
+                    fr => fr.RecieverUserId,
+                    u => u.Id,
+                    (fr, u) => new FriendRequest
+                    {
+                        SenderName = u.FirstName + " " + u.LastName,
+                        SenderUserName = u.UserName,
+                        SentAt = fr.SentAt,
+                        FriendUserId = (fr.SenderUserId == userId) ? fr.RecieverUserId : fr.SenderUserId,
+                        ProfileUrl = u.ProfilePhotoUrl,
+
+                    })
+                .ToList();
+            return new FriendRequestData() { FriendRequestsRecieved = friendRequestModels1, FriendRequestsSent = friendRequestModels2 };
         }
 
         public async Task<List<FriendData>> GetUserFriendsData(string userId)

@@ -2,6 +2,12 @@
 {
     public class FriendRequestData
     {
+        public List<FriendRequest> FriendRequestsRecieved { get; set; }
+        public List<FriendRequest> FriendRequestsSent { get; set; }
+
+    }
+    public class FriendRequest
+    {
         public string SenderName { get; set; }
 
         public string SenderUserName { get; set; }

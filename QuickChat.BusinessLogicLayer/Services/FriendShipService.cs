@@ -85,10 +85,14 @@ namespace QuickChat.BusinessLogicLayer.Services
 
             return false;
         }
-        public async Task<IEnumerable<FriendRequestData>> GetUserFriendRequests(string userId)
+        public async Task<FriendRequestData> GetUserFriendRequests(string userId)
         {
             var friendRequests = await _friendhipRepository.GetUserFriendRequests(userId);
-            foreach (var request in friendRequests)
+            foreach (var request in friendRequests.FriendRequestsRecieved)
+            {
+                request.CommonFriendsCount = await GetCommonFriendsCount(userId, request.FriendUserId);
+            }
+            foreach (var request in friendRequests.FriendRequestsSent)
             {
                 request.CommonFriendsCount = await GetCommonFriendsCount(userId, request.FriendUserId);
             }
